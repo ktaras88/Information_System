@@ -10,11 +10,17 @@ class Person(models.Model):
     place_birthday = models.CharField(max_length=20)
     address = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.first_name + ' ' + self.second_name
+
 
 class Position(models.Model):
     position = models.CharField(max_length=20)
     rate = models.IntegerField()
     vacation_days = models.IntegerField()
+
+    def __str__(self):
+        return self.position
 
 
 class Employee(models.Model):
@@ -30,6 +36,9 @@ class Department(models.Model):
     name = models.CharField(max_length=20)
     abbreviation = models.CharField(max_length=10)
     max_amount = models.IntegerField(default=20)
+
+    def __str__(self):
+        return self.name
 
 
 class HistoryVacation(models.Model):

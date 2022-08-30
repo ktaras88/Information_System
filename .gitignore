@@ -1,2 +1,4 @@
-venv/
+venv
 .idea
+company/__pycache__
+information_system/__pycache__
