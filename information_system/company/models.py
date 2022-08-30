@@ -22,7 +22,7 @@ class Employee(models.Model):
     position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
     employment_date = models.DateField()
     fired_date = models.DateField()
-    head_officer = models.BooleanField()
+    head_officer = models.BooleanField(default=False)
 
 
 class Department(models.Model):
