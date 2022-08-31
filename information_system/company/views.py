@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics
 
-from .models import Person, Position, Employee, Department, HistoryVacation
-from .serializers import PersonSerializer, PositionSerializer, EmployeeSerializer, DepartmentSerializer, \
-    HistoryVacationSerializer
+from .models import *
+from .serializers import *
 
 
 class PersonAPIView(generics.ListCreateAPIView):
@@ -36,6 +35,15 @@ class EmployeeAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EmployeeSerializer
 
 
+class EmployeeVacationAPIView(generics.ListCreateAPIView):
+    queryset = HistoryVacation.objects.all()
+    serializer_class = HistoryVacationSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return HistoryVacation.objects.filter(employee_id=pk)
+
+
 class DepartmentAPIView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
@@ -46,11 +54,6 @@ class DepartmentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DepartmentSerializer
 
 
-class HistoryVacationAPIView(generics.ListCreateAPIView):
-    queryset = HistoryVacation.objects.all()
-    serializer_class = HistoryVacationSerializer
-
-
-class HistoryVacationAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+class HistoryVacationAPIView(generics.ListAPIView):
     queryset = HistoryVacation.objects.all()
     serializer_class = HistoryVacationSerializer
