@@ -30,6 +30,9 @@ class Employee(models.Model):
     fired_date = models.DateField()
     head_officer = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(self.person_id)
+
 
 class Department(models.Model):
     employees = models.ManyToManyField(Employee, related_name='departments')

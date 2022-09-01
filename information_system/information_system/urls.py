@@ -29,10 +29,11 @@ urlpatterns = [
     path('api/v1/persons/<int:pk>/', PersonAPIDetailView.as_view()),
     path('api/v1/employees/', EmployeeAPIView.as_view()),
     path('api/v1/employees/<int:pk>/', EmployeeAPIDetailView.as_view()),
+    path('api/v1/employees/<int:pk>/vacations/', EmployeeVacationAPIView.as_view()),
     path('api/v1/positions/', PositionAPIView.as_view()),
     path('api/v1/positions/<int:pk>/', PositionAPIDetailView.as_view()),
     path('api/v1/departments/', DepartmentAPIView.as_view()),
     path('api/v1/departments/<int:pk>/', DepartmentAPIDetailView.as_view()),
-    path('api/v1/historyVacations/', HistoryVacationAPIView.as_view()),
-    path('api/v1/historyVacations/<int:pk>/', HistoryVacationAPIDetailView.as_view()),
+    path('api/v1/departments/<int:pk>/employees/', DepartmentEmployeeAPIView.as_view()),
+    path('api/v1/reports/', ReportsAPIView.as_view()),
 ]

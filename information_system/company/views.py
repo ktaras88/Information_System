@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Person, Position, Employee, Department, HistoryVacation
-from .serializers import PersonSerializer, PositionSerializer, EmployeeSerializer, DepartmentSerializer, \
-    HistoryVacationSerializer
+from .models import *
+from .serializers import *
 
 
 class PersonAPIView(generics.ListCreateAPIView):
@@ -36,6 +37,15 @@ class EmployeeAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EmployeeSerializer
 
 
+class EmployeeVacationAPIView(generics.ListCreateAPIView):
+    queryset = HistoryVacation.objects.all()
+    serializer_class = HistoryVacationSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return HistoryVacation.objects.filter(employee_id=pk)
+
+
 class DepartmentAPIView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
@@ -46,11 +56,31 @@ class DepartmentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DepartmentSerializer
 
 
-class HistoryVacationAPIView(generics.ListCreateAPIView):
+class HistoryVacationAPIView(generics.ListAPIView):
     queryset = HistoryVacation.objects.all()
     serializer_class = HistoryVacationSerializer
 
 
-class HistoryVacationAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = HistoryVacation.objects.all()
-    serializer_class = HistoryVacationSerializer
+class ReportsAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, format=None):
+        reports = {
+            'reports': [
+                'List of employees of the departments',
+                'List of days spent on vacation for each employee',
+                'List of employees with position and rate',
+                'List of departments with an indication of the head of department and the number of employees',
+                'List of salaries for employees'
+            ]
+        }
+        return Response(reports)
+
+
+class DepartmentEmployeeAPIView(generics.ListAPIView):
+    queryset = Department.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return Department.objects.get(id=pk).employees.all()
