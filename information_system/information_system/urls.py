@@ -34,5 +34,6 @@ urlpatterns = [
     path('api/v1/positions/<int:pk>/', PositionAPIDetailView.as_view()),
     path('api/v1/departments/', DepartmentAPIView.as_view()),
     path('api/v1/departments/<int:pk>/', DepartmentAPIDetailView.as_view()),
-    path('api/v1/history-vacations/', HistoryVacationAPIView.as_view()),
+    path('api/v1/departments/<int:pk>/employees/', DepartmentEmployeeAPIView.as_view()),
+    path('api/v1/reports/', ReportsAPIView.as_view()),
 ]
