@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.db.models.aggregates import Sum
+from django.db.models.expressions import F
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import *
-from .serializers import *
+from .models import Person, Position, Employee, Department, HistoryVacation
+from .serializers import PersonSerializer, PositionSerializer, EmployeeSerializer, DepartmentSerializer, \
+    HistoryVacationSerializer, ReportVacationSerializer
 
 
 class PersonAPIView(generics.ListCreateAPIView):
@@ -56,11 +58,6 @@ class DepartmentAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DepartmentSerializer
 
 
-class HistoryVacationAPIView(generics.ListAPIView):
-    queryset = HistoryVacation.objects.all()
-    serializer_class = HistoryVacationSerializer
-
-
 class ReportsAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -84,3 +81,8 @@ class DepartmentEmployeeAPIView(generics.ListAPIView):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         return Department.objects.get(id=pk).employees.all()
+
+
+class ReportsVacationsAPIView(generics.ListAPIView):
+    queryset = HistoryVacation.objects.values('employee_id').annotate(days=Sum(F('finish_date')-F('start_date')))
+    serializer_class = ReportVacationSerializer

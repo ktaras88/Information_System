@@ -48,3 +48,6 @@ class HistoryVacation(models.Model):
     employee_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
     start_date = models.DateField()
     finish_date = models.DateField()
+
+    def __str__(self):
+        return str(self.employee_id)

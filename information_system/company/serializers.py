@@ -31,3 +31,8 @@ class HistoryVacationSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistoryVacation
         fields = '__all__'
+
+
+class ReportVacationSerializer(serializers.Serializer):
+    days = serializers.DurationField()
+    employee_id = serializers.IntegerField()
