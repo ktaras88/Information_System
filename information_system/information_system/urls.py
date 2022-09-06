@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from .yasg import urlpatterns as doc_urls
 
 from company.views import *
 
@@ -25,6 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+
     path('api/v1/persons/', PersonAPIView.as_view()),
     path('api/v1/persons/<int:pk>/', PersonAPIDetailView.as_view()),
     path('api/v1/employees/', EmployeeAPIView.as_view()),
@@ -38,3 +44,5 @@ urlpatterns = [
     path('api/v1/reports/', ReportsAPIView.as_view()),
     path('api/v1/reports/vacations/', ReportsVacationsAPIView.as_view()),
 ]
+
+urlpatterns += doc_urls
