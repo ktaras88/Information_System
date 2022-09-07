@@ -3,3 +3,4 @@ venv
 information_system/company/__pycache__
 information_system/information_system/__pycache__
 information_system/company/migrations/__pycache__
+information_system/company/tests/__pycache__
