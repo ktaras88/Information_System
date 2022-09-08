@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 
 from .models import *
@@ -42,13 +44,13 @@ class HistoryVacationSerializer(serializers.ModelSerializer):
         model = HistoryVacation
         fields = '__all__'
 
-    # def save(self, *args, **kwargs):
-    #     departments = Department.objects.filter(employees__id=self.validated_data['employee_id'].id)
-    #     for department in departments:
-    #         breakpoint()
-    #         if len(Employee.objects.filter(departments__id=department.id)) > 5:
-    #             raise QuantityLimit('Currently on vacation are 5 employees')
-    #         return super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        vacation_now = HistoryVacation.objects.filter(finish_date__gte=datetime.date.today())
+        department = Department.objects.get(employees__id=self.validated_data['employee_id'].id)
+        vacation_one_department = vacation_now.filter(employee_id__departments=department)
+        if len(vacation_one_department) >= 5:
+            raise QuantityLimit('Currently on vacation are 5 employees')
+        return super().save(*args, **kwargs)
 
 
 class ReportVacationSerializer(serializers.Serializer):
