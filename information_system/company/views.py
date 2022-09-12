@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models.aggregates import Sum
 from django.db.models.expressions import F
 from rest_framework import generics, permissions
@@ -6,7 +8,7 @@ from rest_framework.views import APIView
 
 from .models import Person, Position, Employee, Department, HistoryVacation
 from .serializers import PersonSerializer, PositionSerializer, EmployeeSerializer, DepartmentSerializer, \
-    HistoryVacationSerializer, ReportVacationSerializer
+    HistoryVacationSerializer, ReportVacationSerializer, ReportsSalarySerializer
 
 
 class PersonAPIView(generics.ListCreateAPIView):
@@ -86,3 +88,22 @@ class DepartmentEmployeeAPIView(generics.ListAPIView):
 class ReportsVacationsAPIView(generics.ListAPIView):
     queryset = HistoryVacation.objects.values('employee_id').annotate(days=Sum(F('finish_date')-F('start_date')))
     serializer_class = ReportVacationSerializer
+
+
+class ReportsSalaryAPIView(APIView):
+    def get(self, request):
+        employees = Employee.objects.all()
+        total = []
+        for employee in employees:
+            salary_info = {}
+            experience = datetime.date.today() - employee.employment_date
+            if experience.days >= 365:
+                salary = employee.position_id.rate * (1 + (experience.days//365) * 0.012)
+            else:
+                salary = employee.position_id.rate
+            salary_info['name'] = employee.person_id.first_name+' '+employee.person_id.second_name
+            salary_info['position'] = employee.position_id.position
+            salary_info['rate'] = employee.position_id.rate
+            salary_info['salary'] = salary
+            total.append(salary_info)
+        return Response(ReportsSalarySerializer(total, many=True).data)

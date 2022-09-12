@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/v1/departments/<int:pk>/employees/', DepartmentEmployeeAPIView.as_view()),
     path('api/v1/reports/', ReportsAPIView.as_view()),
     path('api/v1/reports/vacations/', ReportsVacationsAPIView.as_view()),
+    path('api/v1/reports/salary/', ReportsSalaryAPIView.as_view()),
 ]
 
 urlpatterns += doc_urls

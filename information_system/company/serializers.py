@@ -58,5 +58,12 @@ class ReportVacationSerializer(serializers.Serializer):
     employee_id = serializers.IntegerField()
 
 
+class ReportsSalarySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    position = serializers.CharField()
+    rate = serializers.IntegerField()
+    salary = serializers.IntegerField()
+
+
 class QuantityLimit(Exception):
     pass

@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -31,6 +30,10 @@ class PersonApiTestCase(APITestCase):
             "address": "Shevchenka street"
         }
 
+    def tearDown(self):
+        del self.person1, self.person2
+        del self.data
+
     def test_get(self):
         response = self.client.get('/api/v1/persons/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -55,27 +58,28 @@ class PersonApiTestCase(APITestCase):
             "place_birthday": "Lviv",
             "address": "Shevchenka street"
         }
-        response = self.client.post('/api/v1/persons/', data)  # headers={'auth-token': 'string'}
+        response = self.client.post('/api/v1/persons/', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_put_un_authenticated(self):
         self.client.force_authenticate(user=None, token=None)
-        response = self.client.put('/api/v1/persons/1/', self.data)
+        id_person1 = self.person1.id
+        response = self.client.put(f'/api/v1/persons/{id_person1}/', self.data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_put_authenticated(self):
-        Person.objects.create(
-            id=1,
-            first_name='N1',
-            second_name='N11',
-            middle_name='N111',
-            passport='PP908070',
-            birthday='1988-12-27',
-            place_birthday='Lviv',
-            address='Shevchenka street')
-
-        response = self.client.put('/api/v1/persons/1/', self.data)
+        id_person1 = self.person1.id
+        response = self.client.put(f'/api/v1/persons/{id_person1}/', self.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def tearDown(self):
-        pass
+    def test_delete_authenticated(self):
+        id_person1 = self.person1.id
+        response = self.client.delete(f'/api/v1/persons/{id_person1}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Person.objects.all().count(), 1)
+
+    def test_delete_un_authenticated(self):
+        self.client.force_authenticate(user=None, token=None)
+        id_person1 = self.person1.id
+        response = self.client.delete(f'/api/v1/persons/{id_person1}/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
